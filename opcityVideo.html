@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试透明视频</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1 , maximum-scale=1 , user-scalable=no">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        html{
+            width: 100%;
+            min-height: 100%;
+            overflow: hidden;
+        }
+        body{
+            height: 100%;
+        }
+        #container{
+            height: 100%;
+        }
+        #container img{
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<body>
+<div id="container">
+    <img src="libs/0_00016.png" alt="">
+</div>
+<script>
+    !(function(doc) {
+        var cont = doc.getElementById("container");
+        var cw = 750;
+        var ch = 212;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = cw;
+        canvas.height = ch;
+        canvas.style.zIndex = 8;
+        canvas.style.top = 0;
+        canvas.style.left = 0;
+        canvas.style.position = "absolute";
+        cont.appendChild(canvas);
+        var cont2D = canvas.getContext("2d");
+
+        var video = document.createElement('video');
+        video.preload = "auto";
+        video.volume = 0.3;
+        video.setAttribute('x-webkit-airplay', true);
+        video.setAttribute('webkit-playsinline', true);
+        video.setAttribute('webkit-playsinline', 'webkit-playsinline');
+        video.src = 'libs/shiping.mp4';
+        video.loop = 'loop';
+        video.autoplay = "autoplay"; //是自动播放
+
+        video.addEventListener("play", function() {
+            draw(this, canvas, cont2D, cw, ch);
+        }, false)
+
+        function cerateCanvas(w, h) {
+            var cr = doc.createElement("canvas");
+            cr.width = w;
+            cr.height = h;
+            return cr;
+        }
+        var isTrue = true;
+
+        function draw(v, c, c2, w, h) {
+            if(v.paused || v.ended) {
+                cancelAnimationFrame(stop);
+                return false;
+            }
+            c2.drawImage(v, 0, 0, w, h);
+            var imageDate1 = c2.getImageData(0, 0, w/2, h),
+                imageDate2 = c2.getImageData(w/2, 0, w/2, h);
+           for(var i = 0, j = imageDate1.data.length; i < j; i+=4) {
+               // console.log(imageDate2.data[i]);
+               var charge1 = imageDate2.data[i],
+                   charge2 = imageDate2.data[i + 1],
+                   charge3 = imageDate2.data[i + 2];
+               // // imageDate1.data[i + 3] = 0;
+               //
+
+               if((charge1 + charge2 + charge3)/3 < 100 ) {
+                   imageDate1.data[i + 3] = 0;
+               }
+            }
+            c2.putImageData(imageDate1, 0, 0, 0, 0, w/2, h);
+
+            var stop = requestAnimationFrame(function() {
+                draw(v, c, c2, w, h);
+            });
+        }
+    })(document)
+</script>
+
+</body>
+</html>
