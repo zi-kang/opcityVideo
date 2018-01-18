@@ -25,6 +25,13 @@
             width: 100%;
             height: auto;
         }
+        #startBtn{
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            font-size: 18px;
+            color: #ff0000;
+        }
     </style>
 </head>
 <body>
@@ -32,6 +39,7 @@
 <div id="container">
     <img src="libs/0_00016.png" alt="">
 </div>
+    <div id="startBtn"> 开始 </div>
 <script>
     !(function(doc) {
         var cont = doc.getElementById("container");
@@ -58,6 +66,9 @@
         video.loop = 'loop';
         video.autoplay = "autoplay"; //是自动播放
 
+        document.getElemenById('startBtn').onClick = function(){
+            video.play();
+        }
         video.addEventListener("play", function() {
             draw(this, canvas, cont2D, cw, ch);
         }, false)
